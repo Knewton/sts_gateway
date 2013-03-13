@@ -1,0 +1,21 @@
+Uses apache auth and netgroups to provide amazon sts credentials to users.
+
+dependencies:
+
+binaries:
+innetgr
+apache2
+
+perl5:
+Data::Dumper
+LWP::UserAgent
+HTTP::Request::Common
+MIME::Base64
+Digest::SHA
+POSIX
+URI
+URI::Escape
+XML::Simple
+JSON
+CGI
+

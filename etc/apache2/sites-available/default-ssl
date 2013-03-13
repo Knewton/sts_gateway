@@ -1,0 +1,57 @@
+<ifModule mod_ssl.c>
+<VirtualHost _default_:443>
+    ServerAdmin you@yourcompany.com
+    ServerName automator.yourcompany.net
+
+    DocumentRoot /var/www
+
+    <Directory />
+        Options FollowSymLinks
+        AllowOverride None
+    </Directory>
+
+    <Directory /var/www/aws_sts_web/>
+        SSLVerifyClient require
+        SSLVerifyDepth 1
+        SSLCACertificateFile <FILE.pem>
+        SSLRequire %{SSL_CLIENT_S_DN_CN} eq "aws-sts-proxy.yourcompany.net"
+        Options FollowSymLinks -MultiViews +ExecCGI
+        AllowOverride None
+        AddHandler cgi-script .cgi
+        Order allow,deny
+        allow from all
+    </Directory>
+
+    <Directory /var/www/aws_sts_api/>
+        SSLVerifyClient require
+        SSLVerifyDepth 1
+        SSLCACertificateFile <FILE.pem>
+        SSLRequire %{SSL_CLIENT_S_DN_CN} eq "aws-sts-proxy.yourcompany.net"
+        Options FollowSymLinks -MultiViews +ExecCGI
+        AllowOverride None
+        AddHandler cgi-script .cgi
+        Order allow,deny
+        allow from all
+    </Directory>
+
+    ErrorLog /var/log/apache2/error.log
+
+    LogLevel debug
+
+    CustomLog /var/log/apache2/ssl_access.log combined
+
+    SSLEngine on
+    SSLCertificateFile <FILE.crt>
+    SSLCertificateKeyFile <FILE.key>
+
+    <FilesMatch "\.(cgi|shtml|phtml|php)$">
+        SSLOptions +StdEnvVars
+    </FilesMatch>
+
+    BrowserMatch "MSIE [2-6]"  nokeepalive \
+                               ssl-unclean-shutdown \
+                               downgrade-1.0 \
+                               force-response-1.0
+    BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+</VirtualHost>
+</IfModule>
